@@ -3,6 +3,8 @@
 
 #include "Ship.h"
 
+#include "ShootComponent.h"
+
 // Sets default values
 AShip::AShip()
 {
@@ -39,5 +41,22 @@ void AShip::Attack()
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, TEXT("This motherfucker should attack!"));
 	}
+	UShootComponent* ShootComponent = GetComponentByClass<UShootComponent>();
+	if(ShootComponent != nullptr)
+	{
+		ShootComponent->Shoot();
+	}
 }
+
+void AShip::Rotate_Implementation(float Value)
+{
+	// Do Something
+}
+
+void AShip::Thrust_Implementation()
+{
+	// Do Something
+}
+
+
 

@@ -4,11 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "IAttackable.h"
+#include "InputActionValue.h"
 #include "GameFramework/Character.h"
 #include "Ship.generated.h"
 
 UCLASS()
-class ASTEROIDSMP_API AShip : public ACharacter, public IAttackable
+class ASTEROIDSMP_API AShip : public APawn, public IAttackable
 {
 	GENERATED_BODY()
 
@@ -29,4 +30,11 @@ public:
 
 	virtual void Attack() override;
 
+	UFUNCTION(BlueprintNativeEvent)
+	void Rotate(float Value);
+	void Rotate_Implementation(float Value);
+	
+	UFUNCTION(BlueprintNativeEvent)
+	void Thrust();
+	void Thrust_Implementation();
 };

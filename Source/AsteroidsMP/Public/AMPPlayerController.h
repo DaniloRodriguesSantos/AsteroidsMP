@@ -7,6 +7,8 @@
 #include "InputActionValue.h"
 #include "AMPPlayerController.generated.h"
 
+class UInputAction;
+
 /**
  * 
  */
@@ -20,10 +22,18 @@ protected:
 	class UInputMappingContext* InputMapping;
 
 	UPROPERTY(EditAnywhere, Category="EnhancedInput")
-	class UInputAction* FireAction;
+	UInputAction* FireAction;
+
+	UPROPERTY(EditAnywhere, Category="EnhancedInput")
+	UInputAction* RotateAction;
+
+	UPROPERTY(EditAnywhere, Category="EnhancedInput")
+	UInputAction* ThrustAction;
 
 private:
 	void Fire();
+	void Rotate(const FInputActionValue& Value);
+	void Thrust();
 	
 public:
 	virtual void SetupInputComponent() override;
