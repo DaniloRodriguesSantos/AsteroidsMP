@@ -32,3 +32,12 @@ void AShip::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 }
 
+void AShip::Attack()
+{
+	IAttackable::Attack();
+	if(GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, TEXT("This motherfucker should attack!"));
+	}
+}
+

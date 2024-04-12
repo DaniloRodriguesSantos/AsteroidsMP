@@ -3,11 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "IAttackable.h"
 #include "GameFramework/Character.h"
 #include "Ship.generated.h"
 
 UCLASS()
-class ASTEROIDSMP_API AShip : public ACharacter
+class ASTEROIDSMP_API AShip : public ACharacter, public IAttackable
 {
 	GENERATED_BODY()
 
@@ -25,5 +26,7 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	virtual void Attack() override;
 
 };
