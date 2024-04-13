@@ -8,6 +8,11 @@
 #include "IAttackable.h"
 #include "Ship.h"
 
+void AAMPPlayerController::BeginPlay()
+{
+	Super::BeginPlay();
+}
+
 void AAMPPlayerController::Fire()
 {
 	if(GetPawn() && GetPawn()->Implements<UAttackable>())

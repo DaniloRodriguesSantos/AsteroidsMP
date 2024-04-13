@@ -30,6 +30,8 @@ protected:
 	UPROPERTY(EditAnywhere, Category="EnhancedInput")
 	UInputAction* ThrustAction;
 
+	virtual void BeginPlay() override;
+	
 private:
 	void Fire();
 	void Rotate(const FInputActionValue& Value);

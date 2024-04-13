@@ -3,11 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Hitable.h"
 #include "GameFramework/Actor.h"
 #include "Asteroid.generated.h"
 
 UCLASS()
-class ASTEROIDSMP_API AAsteroid : public AActor
+class ASTEROIDSMP_API AAsteroid : public AActor, public IHitable
 {
 	GENERATED_BODY()
 	
@@ -25,9 +26,13 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	float MovementSpeed;
 
+	UPROPERTY(EditDefaultsOnly)
+	uint8 Health;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+	virtual void ReceiveDamage() override;
 
 private:
 	void Move(float DeltaTime);

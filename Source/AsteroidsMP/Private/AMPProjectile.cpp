@@ -2,8 +2,11 @@
 
 
 #include "AMPProjectile.h"
+
+#include "Hitable.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 // Sets default values
 AAMPProjectile::AAMPProjectile()
@@ -12,7 +15,7 @@ AAMPProjectile::AAMPProjectile()
 	CollisionComp = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComp"));
 	CollisionComp->InitSphereRadius(5.0f);
 	CollisionComp->BodyInstance.SetCollisionProfileName("Projectile");
-	CollisionComp->OnComponentHit.AddDynamic(this, &AAMPProjectile::OnHit);		// set up a notification for when this component hits something blocking
+	CollisionComp->OnComponentBeginOverlap.AddDynamic(this, &AAMPProjectile::OnHit);		// set up a notification for when this component hits something blocking
 
 	// Players can't walk on it
 	CollisionComp->SetWalkableSlopeOverride(FWalkableSlopeOverride(WalkableSlope_Unwalkable, 0.f));
@@ -34,16 +37,14 @@ AAMPProjectile::AAMPProjectile()
 
 }
 
-void AAMPProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
-	FVector NormalImpulse, const FHitResult& Hit)
+void AAMPProjectile::OnHit(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
+	int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if ((OtherActor != nullptr) && (OtherActor != this) && (OtherComp != nullptr) && OtherComp->IsSimulatingPhysics())
+	if (OtherActor != nullptr && OtherActor != this && OtherActor->Implements<UHitable>())
 	{
-		//OtherComp->AddImpulseAtLocation(GetVelocity() * 100.0f, GetActorLocation());
-		// Asteroid.Shatter
-		// If (Asteroid.Size == Small) {
-		Destroy();
-		// }
+		UKismetSystemLibrary::PrintString(this,
+			FString::Printf(TEXT("I'm '%s' and I do implement 'UHitable', give me pain!"), *OtherActor->GetName()));
+		Cast<IHitable>(OtherActor)->ReceiveDamage();
 	}
 }
 
