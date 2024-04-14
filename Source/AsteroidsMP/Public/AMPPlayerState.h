@@ -13,5 +13,13 @@ UCLASS()
 class ASTEROIDSMP_API AAMPPlayerState : public APlayerState
 {
 	GENERATED_BODY()
-	
+
+	AAMPPlayerState();
+private:
+	uint8 Health;
+
+public:
+	void IncreaseHealth();
+	void DecreaseHealth();
+	uint8 GetHealth() const { return Health; };
 };

@@ -33,7 +33,7 @@ AAMPProjectile::AAMPProjectile()
 	ProjectileMovement->bShouldBounce = true;
 
 	// Die after 3 seconds by default
-	InitialLifeSpan = 3.0f;
+	InitialLifeSpan = 5.0f; // 3.0f
 
 }
 
@@ -45,6 +45,7 @@ void AAMPProjectile::OnHit(UPrimitiveComponent* OverlappedComponent, AActor* Oth
 		UKismetSystemLibrary::PrintString(this,
 			FString::Printf(TEXT("I'm '%s' and I do implement 'UHitable', give me pain!"), *OtherActor->GetName()));
 		Cast<IHitable>(OtherActor)->ReceiveDamage();
+		Destroy();
 	}
 }
 

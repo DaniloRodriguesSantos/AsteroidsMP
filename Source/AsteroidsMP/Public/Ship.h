@@ -3,19 +3,23 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Hitable.h"
 #include "IAttackable.h"
 #include "InputActionValue.h"
 #include "GameFramework/Character.h"
 #include "Ship.generated.h"
 
 UCLASS()
-class ASTEROIDSMP_API AShip : public APawn, public IAttackable
+class ASTEROIDSMP_API AShip : public APawn, public IAttackable, public IHitable
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this character's properties
 	AShip();
+
+private:
+	FTransform OriginPoint;
 
 protected:
 	// Called when the game starts or when spawned
@@ -37,4 +41,8 @@ public:
 	UFUNCTION(BlueprintNativeEvent)
 	void Thrust();
 	void Thrust_Implementation();
+
+	virtual void ReceiveDamage() override;
+	void Respawn();
+	void Die();
 };

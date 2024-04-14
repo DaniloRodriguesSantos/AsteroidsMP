@@ -3,6 +3,7 @@
 
 #include "Ship.h"
 
+#include "AMPPlayerState.h"
 #include "ShootComponent.h"
 
 // Sets default values
@@ -10,14 +11,14 @@ AShip::AShip()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
+	
 }
 
 // Called when the game starts or when spawned
 void AShip::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	OriginPoint = GetActorTransform();
 }
 
 // Called every frame
@@ -56,6 +57,34 @@ void AShip::Rotate_Implementation(float Value)
 void AShip::Thrust_Implementation()
 {
 	// Do Something
+}
+
+void AShip::ReceiveDamage()
+{
+	IHitable::ReceiveDamage();
+	AAMPPlayerState* CurretPlayerState = Cast<AAMPPlayerState>(GetPlayerState());
+	CurretPlayerState->DecreaseHealth();
+	if(CurretPlayerState->GetHealth() > 0)
+	{
+		Respawn();
+	}
+	else
+	{
+		Die();	
+	}
+}
+
+void AShip::Respawn()
+{
+	UPrimitiveComponent* physicsComponent = Cast<UPrimitiveComponent>(GetRootComponent());
+	physicsComponent->SetSimulatePhysics(false);
+	SetActorLocationAndRotation(OriginPoint.GetTranslation(), OriginPoint.GetRotation());
+	physicsComponent->SetSimulatePhysics(true);
+}
+
+void AShip::Die()
+{
+	UE_LOG(LogTemp, Warning, TEXT("End Game!"));
 }
 
 
