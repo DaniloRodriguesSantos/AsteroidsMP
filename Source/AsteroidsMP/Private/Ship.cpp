@@ -3,6 +3,7 @@
 
 #include "Ship.h"
 
+#include "AMPFunctionLibrary.h"
 #include "AMPPlayerState.h"
 #include "ShootComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
@@ -72,6 +73,13 @@ void AShip::Rotate_Implementation(float Value)
 void AShip::Thrust_Implementation()
 {
 	MeshComp->AddImpulse(FVector(GetActorForwardVector() * ThrustForce));
+}
+
+void AShip::HyperspaceJump_Implementation()
+{
+	MeshComp->SetSimulatePhysics(false);
+	SetActorLocation(UAMPFunctionLibrary::GetRandPointInArena());
+	MeshComp->SetSimulatePhysics(true);
 }
 
 void AShip::ReceiveDamage()

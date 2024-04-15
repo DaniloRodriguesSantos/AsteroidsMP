@@ -6,6 +6,8 @@
 #include "GameFramework/PlayerState.h"
 #include "AMPPlayerState.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FHealthChanged);
+
 /**
  * 
  */
@@ -16,10 +18,16 @@ class ASTEROIDSMP_API AAMPPlayerState : public APlayerState
 
 	AAMPPlayerState();
 private:
-	uint8 Health;
+	int Health;
+	bool bIsDead;
 
 public:
+	UPROPERTY(BlueprintAssignable)
+	FHealthChanged OnHealthChanged;
 	void IncreaseHealth();
 	void DecreaseHealth();
-	uint8 GetHealth() const { return Health; };
+	UFUNCTION(BlueprintPure)
+	int GetHealth() const { return Health; }
+	bool IsDead() const { return bIsDead; }
+	
 };

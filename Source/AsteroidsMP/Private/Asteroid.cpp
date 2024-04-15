@@ -91,7 +91,7 @@ float AAsteroid::GetSpeedBySize() const
 	return correctSpeed;
 }
 
-void AAsteroid::SpawnChildAsteroids(EAsteroidSize ChildrenSize)
+void AAsteroid::SpawnChildAsteroids_Implementation(EAsteroidSize ChildrenSize)
 {
 	UWorld* World = GetWorld();
 	FTransform spawnTransform = FTransform(GetActorRotation(), GetActorLocation(),FVector(1.f, 1.f, 1.f));

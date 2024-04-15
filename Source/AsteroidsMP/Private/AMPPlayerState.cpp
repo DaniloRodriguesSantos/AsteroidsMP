@@ -11,11 +11,17 @@ AAMPPlayerState::AAMPPlayerState()
 void AAMPPlayerState::IncreaseHealth()
 {
 	Health++;
+	OnHealthChanged.Broadcast();
 	UE_LOG(LogTemp, Warning, TEXT("Increased Health! Health now is: %d"), Health);
 }
 
 void AAMPPlayerState::DecreaseHealth()
 {
 	Health--;
+	OnHealthChanged.Broadcast();
 	UE_LOG(LogTemp, Warning, TEXT("Decreased Health! Health now is: %d"), Health);
+	if(Health <= 0)
+	{
+		bIsDead = false;
+	}
 }

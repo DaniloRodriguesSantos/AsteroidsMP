@@ -55,6 +55,9 @@ public:
 	UFUNCTION(Server, Reliable)
 	void Thrust();
 
+	UFUNCTION(Server, Reliable)
+	void HyperspaceJump();
+
 	virtual void ReceiveDamage() override;
 	void Respawn();
 	void Die();

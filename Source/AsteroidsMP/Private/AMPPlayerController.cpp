@@ -14,6 +14,7 @@
 AAMPPlayerController::AAMPPlayerController()
 {
 	bAutoManageActiveCameraTarget = false;
+	bIsGamePaused = false;
 }
 
 void AAMPPlayerController::BeginPlay()
@@ -23,6 +24,28 @@ void AAMPPlayerController::BeginPlay()
 	{
 		ClientSetViewTarget(*ActorItr);
 		break;
+	}
+}
+
+void AAMPPlayerController::PauseGame_Implementation()
+{
+	if(!bIsGamePaused)
+	{
+		bIsGamePaused = true;
+		FInputModeUIOnly NewInputMode;
+		SetInputMode(NewInputMode);
+		SetShowMouseCursor(true);
+	}
+}
+
+void AAMPPlayerController::ResumeGame_Implementation()
+{
+	if(bIsGamePaused)
+	{
+		bIsGamePaused = false;
+		FInputModeGameOnly NewInputMode;
+		SetInputMode(NewInputMode);
+		SetShowMouseCursor(false);
 	}
 }
 
@@ -50,6 +73,14 @@ void AAMPPlayerController::Thrust()
 	}
 }
 
+void AAMPPlayerController::HyperspaceJump()
+{
+	if(GetPawn())
+	{
+		Cast<AShip>(GetPawn())->HyperspaceJump();
+	}
+}
+
 void AAMPPlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
@@ -63,6 +94,8 @@ void AAMPPlayerController::SetupInputComponent()
 			Input->BindAction(FireAction, ETriggerEvent::Triggered, this, &AAMPPlayerController::Fire);
 			Input->BindAction(RotateAction, ETriggerEvent::Triggered, this, &AAMPPlayerController::Rotate);
 			Input->BindAction(ThrustAction, ETriggerEvent::Triggered, this, &AAMPPlayerController::Thrust);
+			Input->BindAction(HyperSpaceAction, ETriggerEvent::Triggered, this, &AAMPPlayerController::HyperspaceJump);
+			Input->BindAction(PauseGameAction, ETriggerEvent::Triggered, this, &AAMPPlayerController::PauseGame);
 		}
 	}
 }

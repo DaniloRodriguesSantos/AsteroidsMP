@@ -42,12 +42,10 @@ private:
 	void Move(float DeltaTime);
 	float GetSpeedBySize() const;
 
-	//UFUNCTION(Server, Reliable)
+	UFUNCTION(Server, Reliable)
 	void SpawnChildAsteroids(EAsteroidSize ChildrenSize);
 
 	UFUNCTION()
 	void OnHit(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-
-	//virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 };

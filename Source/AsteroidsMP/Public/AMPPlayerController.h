@@ -32,12 +32,27 @@ protected:
 	UPROPERTY(EditAnywhere, Category="EnhancedInput")
 	UInputAction* ThrustAction;
 
+	UPROPERTY(EditAnywhere, Category="EnhancedInput")
+	UInputAction* HyperSpaceAction;
+
+	UPROPERTY(EditAnywhere, Category="EnhancedInput")
+	UInputAction* PauseGameAction;
+
 	virtual void BeginPlay() override;
+
+	bool bIsGamePaused;
+	
+	UFUNCTION(BlueprintNativeEvent)
+	void PauseGame();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void ResumeGame();
 	
 private:
 	void Fire();
 	void Rotate(const FInputActionValue& Value);
 	void Thrust();
+	void HyperspaceJump();
 	
 public:
 	virtual void SetupInputComponent() override;
