@@ -1,6 +1,6 @@
 # AsteroidsMP
 
-This is a remake of the classic Asteroids game, made in Unreal, adding multiplayer into the mix!
+This is a remake of the classic Asteroids game, made in Unreal, adding multiplayer (Only LAN for now) into the mix!
 
 ## Controls
 AD: Rotates the ship;  <br>
