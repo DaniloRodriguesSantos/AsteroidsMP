@@ -42,8 +42,6 @@ void AAMPProjectile::OnHit(UPrimitiveComponent* OverlappedComponent, AActor* Oth
 {
 	if (OtherActor != nullptr && OtherActor != this && OtherActor->Implements<UHitable>())
 	{
-		UKismetSystemLibrary::PrintString(this,
-			FString::Printf(TEXT("I'm '%s' and I do implement 'UHitable', give me pain!"), *OtherActor->GetName()));
 		Cast<IHitable>(OtherActor)->ReceiveDamage();
 		Destroy();
 	}

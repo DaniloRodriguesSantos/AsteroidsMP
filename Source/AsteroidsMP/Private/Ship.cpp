@@ -5,13 +5,32 @@
 
 #include "AMPPlayerState.h"
 #include "ShootComponent.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 // Sets default values
 AShip::AShip()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+	RotationForce = 9500.f;
+	ThrustForce = 600.f;
+	bReplicates = true;
+	SetReplicatingMovement(true);
+
+	// Create Mesh Component
+	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComp"));
 	
+	// Set as root component
+	RootComponent = MeshComp;
+	
+	// Use a sphere as a simple collision representation
+	CollisionComp = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxComp"));
+
+	// Players can't walk on it
+	CollisionComp->SetWalkableSlopeOverride(FWalkableSlopeOverride(WalkableSlope_Unwalkable, 0.f));
+	CollisionComp->CanCharacterStepUpOn = ECB_No;
+
+	CollisionComp->SetupAttachment(RootComponent);
 }
 
 // Called when the game starts or when spawned
@@ -35,13 +54,9 @@ void AShip::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 }
 
-void AShip::Attack()
+void AShip::Attack_Implementation()
 {
 	IAttackable::Attack();
-	if(GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, TEXT("This motherfucker should attack!"));
-	}
 	UShootComponent* ShootComponent = GetComponentByClass<UShootComponent>();
 	if(ShootComponent != nullptr)
 	{
@@ -51,27 +66,35 @@ void AShip::Attack()
 
 void AShip::Rotate_Implementation(float Value)
 {
-	// Do Something
+	MeshComp->AddTorqueInRadians(FVector(0.f, 0.f, 95000.0f * Value));
 }
 
 void AShip::Thrust_Implementation()
 {
-	// Do Something
+	MeshComp->AddImpulse(FVector(GetActorForwardVector() * ThrustForce));
 }
 
 void AShip::ReceiveDamage()
 {
 	IHitable::ReceiveDamage();
-	AAMPPlayerState* CurretPlayerState = Cast<AAMPPlayerState>(GetPlayerState());
-	CurretPlayerState->DecreaseHealth();
-	if(CurretPlayerState->GetHealth() > 0)
+	AAMPPlayerState* CurrentPlayerState = Cast<AAMPPlayerState>(GetPlayerState());
+	if(CurrentPlayerState)
 	{
-		Respawn();
-	}
-	else
+		CurrentPlayerState->DecreaseHealth();
+		if(CurrentPlayerState->GetHealth() > 0)
+		{
+			Respawn();
+		}
+		else
+		{
+			Die();	
+		}
+	}else
 	{
-		Die();	
+		UKismetSystemLibrary::PrintString(this,
+					FString::Printf(TEXT("PlayerState is not valid!")));
 	}
+
 }
 
 void AShip::Respawn()

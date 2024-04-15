@@ -14,11 +14,4 @@ UCLASS()
 class ASTEROIDSMP_API AAMPGameMode : public AGameMode
 {
 	GENERATED_BODY()
-
-public:
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<AAsteroid> AsteroidClass;
-	
-public:	
-	void IncreasePlayerScore(APlayerController* PlayerController, float Value);
 };

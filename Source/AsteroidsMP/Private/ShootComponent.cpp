@@ -21,7 +21,7 @@ void UShootComponent::BeginPlay()
 	}
 }
 
-void UShootComponent::Shoot()
+void UShootComponent::Shoot_Implementation()
 {
 	//Try and fire a projectile
 	if (ProjectileClass != nullptr)
@@ -33,7 +33,7 @@ void UShootComponent::Shoot()
 			{
 				//Set Spawn Collision Handling Override
 				FActorSpawnParameters ActorSpawnParams;
-				ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
+				ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 			
 				// Spawn the projectile at the muzzle
 				World->SpawnActor<AAMPProjectile>(ProjectileClass, Muzzles[i]->GetComponentLocation(), Muzzles[i]->GetComponentRotation(), ActorSpawnParams);

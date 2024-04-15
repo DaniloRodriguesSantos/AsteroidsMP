@@ -3,10 +3,14 @@
 
 #include "Asteroid.h"
 
+#include "AMPGameInstance.h"
 #include "AMPGameMode.h"
+#include "AMPGameState.h"
 #include "AMPPlayerState.h"
 #include "Components/SphereComponent.h"
+#include "GameFramework/GameStateBase.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Net/UnrealNetwork.h"
 
 // Sets default values
 AAsteroid::AAsteroid()
@@ -14,6 +18,7 @@ AAsteroid::AAsteroid()
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	Size = EAsteroidSize::Big;
+	SetReplicates(true);
 }
 
 void AAsteroid::Init(EAsteroidSize InSize)
@@ -41,39 +46,20 @@ void AAsteroid::Tick(float DeltaTime)
 void AAsteroid::ReceiveDamage()
 {
 	IHitable::ReceiveDamage();
-	GetWorld()->GetAuthGameMode<AAMPGameMode>()->IncreasePlayerScore(GetWorld()->GetFirstPlayerController(), 10);
 	UWorld* World = GetWorld();
-	FTransform spawnTransform = FTransform(GetActorRotation(), GetActorLocation(),FVector(1.f, 1.f, 1.f));
+	World->GetGameState<AAMPGameState>()->IncreasePlayerScore(World->GetFirstPlayerController(), 10);
 	switch (Size)
 	{
 	case Big:
 		if(World)
 		{
-			// Define spawn parameters
-			//FActorSpawnParameters SpawnParams;
-			//SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-			for (int i = 0; i < 2; ++i)
-			{
-				AAsteroid* SpawnedActor = World->SpawnActorDeferred<AAsteroid>(World->GetAuthGameMode<AAMPGameMode>()->AsteroidClass, spawnTransform);
-				SpawnedActor->Init(EAsteroidSize::Medium);
-				SpawnedActor->FinishSpawning(spawnTransform);
-			}
+			SpawnChildAsteroids(EAsteroidSize::Medium);
 		}
-		// Spawn the projectile at the muzzle
-		
 		break;
 	case Medium:
 		if(World)
 		{
-			// Define spawn parameters
-			//FActorSpawnParameters SpawnParams;
-			//SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-			for (int i = 0; i < 2; ++i)
-			{
-				AAsteroid* SpawnedActor = World->SpawnActorDeferred<AAsteroid>(World->GetAuthGameMode<AAMPGameMode>()->AsteroidClass, spawnTransform);
-				SpawnedActor->Init(EAsteroidSize::Small);
-				SpawnedActor->FinishSpawning(spawnTransform);
-			}
+			SpawnChildAsteroids(EAsteroidSize::Small);
 		}
 		break;
 	}
@@ -105,13 +91,35 @@ float AAsteroid::GetSpeedBySize() const
 	return correctSpeed;
 }
 
+void AAsteroid::SpawnChildAsteroids(EAsteroidSize ChildrenSize)
+{
+	UWorld* World = GetWorld();
+	FTransform spawnTransform = FTransform(GetActorRotation(), GetActorLocation(),FVector(1.f, 1.f, 1.f));
+	UAMPGameInstance* CurrentGameInstance = World->GetGameInstance<UAMPGameInstance>();
+	for (int i = 0; i < 2; ++i)
+	{
+		if(World)
+		{
+			if(CurrentGameInstance)
+			{
+				AAsteroid* SpawnedActor = World->SpawnActorDeferred<AAsteroid>(CurrentGameInstance->AsteroidClass, spawnTransform);
+				SpawnedActor->Init(ChildrenSize);
+				SpawnedActor->FinishSpawning(spawnTransform);
+			}
+			else
+			{
+				UKismetSystemLibrary::PrintString(this,
+					FString::Printf(TEXT("GameInstance is not valid!")));
+			}
+		}
+	}
+}
+
 void AAsteroid::OnHit(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
-	int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+                      int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if (OtherActor != nullptr && OtherActor != this && !OtherActor->IsA(AAsteroid::StaticClass()) && OtherActor->Implements<UHitable>())
 	{
-		UKismetSystemLibrary::PrintString(this,
-			FString::Printf(TEXT("I'm '%s' and I do implement 'UHitable', give me pain!"), *OtherActor->GetName()));
 		Cast<IHitable>(OtherActor)->ReceiveDamage();
 		Destroy();
 	}

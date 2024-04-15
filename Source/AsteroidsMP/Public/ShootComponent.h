@@ -23,6 +23,7 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
+	UFUNCTION(Server, Reliable)
 	void Shoot();
 
 private:

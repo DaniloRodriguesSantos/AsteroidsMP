@@ -2,15 +2,28 @@
 
 
 #include "AMPPlayerController.h"
+#include "EngineUtils.h"
 #include "InputMappingContext.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
 #include "IAttackable.h"
+#include "Camera/CameraActor.h"
 #include "Ship.h"
+#include "Kismet/KismetSystemLibrary.h"
+
+AAMPPlayerController::AAMPPlayerController()
+{
+	bAutoManageActiveCameraTarget = false;
+}
 
 void AAMPPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
+	for (TActorIterator<ACameraActor> ActorItr(GetWorld()); ActorItr; ++ActorItr)
+	{
+		ClientSetViewTarget(*ActorItr);
+		break;
+	}
 }
 
 void AAMPPlayerController::Fire()

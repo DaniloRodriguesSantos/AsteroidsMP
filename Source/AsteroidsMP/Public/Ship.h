@@ -6,6 +6,7 @@
 #include "Hitable.h"
 #include "IAttackable.h"
 #include "InputActionValue.h"
+#include "Components/BoxComponent.h"
 #include "GameFramework/Character.h"
 #include "Ship.generated.h"
 
@@ -25,22 +26,34 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
+public:
+
+	UPROPERTY(EditDefaultsOnly, Category=Ship)
+	UStaticMeshComponent* MeshComp;
+
+	UPROPERTY(EditDefaultsOnly, Category=Ship)
+	UBoxComponent* CollisionComp;
+	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	UFUNCTION(Server, Reliable)
 	virtual void Attack() override;
 
-	UFUNCTION(BlueprintNativeEvent)
+	UFUNCTION(Server, Reliable)
 	void Rotate(float Value);
-	void Rotate_Implementation(float Value);
+
+	UPROPERTY(EditDefaultsOnly)
+	float RotationForce;
+
+	UPROPERTY(EditDefaultsOnly)
+	float ThrustForce;
 	
-	UFUNCTION(BlueprintNativeEvent)
+	UFUNCTION(Server, Reliable)
 	void Thrust();
-	void Thrust_Implementation();
 
 	virtual void ReceiveDamage() override;
 	void Respawn();

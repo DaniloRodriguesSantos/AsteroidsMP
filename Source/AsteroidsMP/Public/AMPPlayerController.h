@@ -17,6 +17,8 @@ class ASTEROIDSMP_API AAMPPlayerController : public APlayerController
 {
 	GENERATED_BODY()
 
+	AAMPPlayerController();
+
 protected:
 	UPROPERTY(EditAnywhere, Category="EnhancedInput")
 	class UInputMappingContext* InputMapping;
